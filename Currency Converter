@@ -1,0 +1,39 @@
+import java.util.Scanner;
+
+public class CurrencyConverter {
+    // Simple example rates relative to INR
+    private static double getRate(String code) {
+        switch (code) {
+            case "USD": return 0.012; // 1 INR = 0.012 USD (example)
+            case "EUR": return 0.011;
+            case "INR": return 1.0;
+            default:    return -1.0;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter base currency (INR/USD/EUR): ");
+        String from = sc.next().toUpperCase();
+
+        System.out.print("Enter target currency (INR/USD/EUR): ");
+        String to = sc.next().toUpperCase();
+
+        System.out.print("Enter amount: ");
+        double amount = sc.nextDouble();
+
+        double rateFrom = getRate(from);
+        double rateTo = getRate(to);
+
+        if (rateFrom < 0 || rateTo < 0) {
+            System.out.println("Unsupported currency code.");
+        } else {
+            double inINR = amount / rateFrom;
+            double converted = inINR * rateTo;
+            System.out.println(amount + " " + from + " = " + converted + " " + to);
+        }
+
+        sc.close();
+    }
+}
