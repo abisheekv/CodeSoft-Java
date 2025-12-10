@@ -1,0 +1,204 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Represents an individual student
+class Student {
+    private String name;
+    private int rollNumber;
+    private String grade;
+    private String email;
+
+    public Student(int rollNumber, String name, String grade, String email) {
+        this.rollNumber = rollNumber;
+        this.name = name;
+        this.grade = grade;
+        this.email = email;
+    }
+
+    public int getRollNumber() {
+        return rollNumber;
+    }
+
+    public void setName(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name;
+        }
+    }
+
+    public void setGrade(String grade) {
+        if (grade != null && !grade.trim().isEmpty()) {
+            this.grade = grade;
+        }
+    }
+
+    public void setEmail(String email) {
+        if (email != null && !email.trim().isEmpty()) {
+            this.email = email;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Roll: " + rollNumber +
+               ", Name: " + name +
+               ", Grade: " + grade +
+               ", Email: " + email;
+    }
+}
+
+// Manages collection of students
+class StudentManagementSystem {
+    private List<Student> students = new ArrayList<>();
+
+    // Add student
+    public void addStudent(Student s) {
+        students.add(s);
+        System.out.println("Student added successfully.");
+    }
+
+    // Remove student by roll number
+    public boolean removeStudent(int roll) {
+        Student s = searchStudent(roll);
+        if (s != null) {
+            students.remove(s);
+            System.out.println("Student removed.");
+            return true;
+        }
+        System.out.println("Student not found.");
+        return false;
+    }
+
+    // Search student by roll number
+    public Student searchStudent(int roll) {
+        for (Student s : students) {
+            if (s.getRollNumber() == roll) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    // Display all students
+    public void displayAll() {
+        if (students.isEmpty()) {
+            System.out.println("No students in system.");
+            return;
+        }
+        for (Student s : students) {
+            System.out.println(s);
+        }
+    }
+}
+
+// Console UI
+public class StudentManagementApp {
+    private static final Scanner sc = new Scanner(System.in);
+    private static final StudentManagementSystem sms = new StudentManagementSystem();
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("\n--- Student Management System ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. Edit Student");
+            System.out.println("3. Remove Student");
+            System.out.println("4. Search Student");
+            System.out.println("5. Display All Students");
+            System.out.println("6. Exit");
+            System.out.print("Enter choice: ");
+            choice = readInt();
+
+            switch (choice) {
+                case 1: addStudentUI(); break;
+                case 2: editStudentUI(); break;
+                case 3: removeStudentUI(); break;
+                case 4: searchStudentUI(); break;
+                case 5: sms.displayAll(); break;
+                case 6: System.out.println("Exiting application."); break;
+                default: System.out.println("Invalid choice.");
+            }
+        } while (choice != 6);
+
+        sc.close();
+    }
+
+    // Input helper with basic validation
+    private static int readInt() {
+        while (!sc.hasNextInt()) {
+            System.out.print("Enter a valid number: ");
+            sc.next();
+        }
+        return sc.nextInt();
+    }
+
+    private static void addStudentUI() {
+        System.out.print("Enter roll number: ");
+        int roll = readInt();
+        sc.nextLine(); // clear newline
+
+        System.out.print("Enter name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter grade (e.g., A/B/C): ");
+        String grade = sc.nextLine();
+
+        System.out.print("Enter email: ");
+        String email = sc.nextLine();
+
+        if (name.isEmpty() || grade.isEmpty() || email.isEmpty()) {
+            System.out.println("All fields are required.");
+            return;
+        }
+
+        Student existing = sms.searchStudent(roll);
+        if (existing != null) {
+            System.out.println("Roll number already exists.");
+            return;
+        }
+
+        sms.addStudent(new Student(roll, name, grade, email));
+    }
+
+    private static void editStudentUI() {
+        System.out.print("Enter roll number of student to edit: ");
+        int roll = readInt();
+        sc.nextLine();
+
+        Student s = sms.searchStudent(roll);
+        if (s == null) {
+            System.out.println("Student not found.");
+            return;
+        }
+
+        System.out.print("New name (leave blank to keep same): ");
+        String name = sc.nextLine();
+        System.out.print("New grade (leave blank to keep same): ");
+        String grade = sc.nextLine();
+        System.out.print("New email (leave blank to keep same): ");
+        String email = sc.nextLine();
+
+        if (!name.isEmpty()) s.setName(name);
+        if (!grade.isEmpty()) s.setGrade(grade);
+        if (!email.isEmpty()) s.setEmail(email);
+
+        System.out.println("Student updated: " + s);
+    }
+
+    private static void removeStudentUI() {
+        System.out.print("Enter roll number to remove: ");
+        int roll = readInt();
+        sms.removeStudent(roll);
+    }
+
+    private static void searchStudentUI() {
+        System.out.print("Enter roll number to search: ");
+        int roll = readInt();
+        Student s = sms.searchStudent(roll);
+        if (s != null) {
+            System.out.println("Student found: " + s);
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+}
